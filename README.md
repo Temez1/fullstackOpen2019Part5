@@ -1,3 +1,3 @@
-# fullstackOpen2019Part5
+# Blogilista Frontend
 
 Kirjatuiminen frontissa.
