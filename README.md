@@ -1,3 +1,3 @@
 # Blogilista Frontend
 
-Kirjatuiminen frontissa.
+Kirjautuminen frontissa.
