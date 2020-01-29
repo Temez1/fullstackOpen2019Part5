@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react"
 
 import blogService from "./services/blogs"
 import loginService from "./services/login"
@@ -7,14 +7,15 @@ import Blog from "./components/Blog"
 import Notification from "./components/Notification"
 import LoginForm from "./components/LoginForm"
 import BlogForm from "./components/BlogForm"
+import Togglable from "./components/Togglable"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]) 
-  const [newBlog, setNewBlog] = useState('')
+  const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState("")
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationStyle, setNotificationStyle] = useState("default")
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -37,13 +38,13 @@ const App = () => {
     setNotificationStyle(style)
     setNotificationMessage(message)
     setMessageTimeout(setNotificationMessage, timeoutInMilliseconds)
- }
+  }
 
- const setMessageTimeout = (messageHandler, timeoutInMilliseconds=5000) => {
+  const setMessageTimeout = (messageHandler, timeoutInMilliseconds=5000) => {
     setTimeout( () => {
-       messageHandler(null)
+      messageHandler(null)
     }, timeoutInMilliseconds)
- }
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -58,10 +59,17 @@ const App = () => {
       setUser(user)
       setUsername("")
       setPassword("")
+      newNotification("Logged in !", "success")
     } catch (exception) {
       newNotification("wrong credentials", "fail")
     }
   }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser")
+    newNotification("Logged out!", "success")
+  }
+
   const addBlog = (event) => {
     event.preventDefault()
     const noteObject = {
@@ -76,32 +84,38 @@ const App = () => {
         setBlogs(blogs.concat(data))
         setNewBlog("")
       })
+    newNotification("Added new blog!", "success")
   }
 
   return (
     <div>
       <h1>Blogs</h1>
 
-      <Notification message={notificationMessage} styleState={notificationStyle} />
+      {notificationMessage !== null && <Notification messageState={notificationMessage} styleState={notificationStyle} />}
 
       <h2>Login</h2>
 
       { user === null
-        ? <LoginForm
-          loginHandler={handleLogin}
-          usernameState={username}
-          usernameSetter={setUsername}
-          passwordState={password}
-          passwordSetter={setPassword}
-        />
+        ? <Togglable buttonLabel="login">
+          <LoginForm
+            loginHandler={handleLogin}
+            usernameState={username}
+            usernameSetter={setUsername}
+            passwordState={password}
+            passwordSetter={setPassword}
+          />
+        </Togglable>
         : <div>
-            <p> {user.name} logged in</p>
+          <p> {user.name} logged in</p>
+          <Togglable buttonLabel="New blog">
             <BlogForm
               blogFormHandler={addBlog}
               blogState={newBlog}
               blogSetter={setNewBlog}
             />
-          </div>
+          </Togglable>
+          <button onClick={handleLogout}>logout</button>
+        </div>
       }
       {blogs.map(blog => <Blog blog = { blog } key={blog.id}/>)}
     </div>

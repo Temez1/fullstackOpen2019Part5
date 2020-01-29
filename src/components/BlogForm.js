@@ -1,13 +1,16 @@
-import React from 'react'
+import React from "react"
 
-  const BlogForm = ({blogFormHandler, blogState, blogSetter}) => (
-    <form onSubmit={blogFormHandler}>
+const BlogForm = ({ blogFormHandler, blogState, blogSetter }) => (
+  <form onSubmit={blogFormHandler}>
+    <div>
+        title
       <input
         value={blogState}
-        onChange={({target}) => blogSetter(target.value)}
+        onChange={({ target }) => blogSetter(target.value)}
       />
-      <button type="submit">save</button>
-    </form>  
-  )
+    </div>
+    <button type="submit">create</button>
+  </form>
+)
 
-  export default BlogForm
+export default BlogForm
