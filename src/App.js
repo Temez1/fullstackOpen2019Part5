@@ -11,7 +11,6 @@ import BlogForm from "./components/BlogForm"
 const App = () => {
   const [blogs, setBlogs] = useState([]) 
   const [newBlog, setNewBlog] = useState('')
-  const [showAll, setShowAll] = useState(true)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationStyle, setNotificationStyle] = useState("default")
   const [username, setUsername] = useState('') 
@@ -23,6 +22,15 @@ const App = () => {
       .getAll().then(initialBlogs => {
         setBlogs(initialBlogs)
       })
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
 
   const newNotification = (message, style, timeoutInMilliseconds=5000) => {
@@ -43,6 +51,8 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
+
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user))
 
       blogService.setToken(user.token)
       setUser(user)
@@ -68,8 +78,6 @@ const App = () => {
       })
   }
 
-  console.log(blogs)
-  
   return (
     <div>
       <h1>Blogs</h1>
@@ -87,7 +95,7 @@ const App = () => {
           passwordSetter={setPassword}
         />
         : <div>
-            <p> {user.name} loggin in</p>
+            <p> {user.name} logged in</p>
             <BlogForm
               blogFormHandler={addBlog}
               blogState={newBlog}
@@ -95,7 +103,7 @@ const App = () => {
             />
           </div>
       }
-
+      {blogs.map(blog => <Blog blog = { blog } key={blog.id}/>)}
     </div>
   )
 }
