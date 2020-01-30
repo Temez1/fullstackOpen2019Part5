@@ -1,3 +1,3 @@
 # Blogilista Frontend
 
-Kirjautuminen frontissa.
+Kirjautuminen frontissa. Props children ja proptypet.
