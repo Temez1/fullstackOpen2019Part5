@@ -1,7 +1,7 @@
 import React from "react"
 import "@testing-library/jest-dom/extend-expect"
 import { render, cleanup, fireEvent } from "@testing-library/react"
-import SimpleBlog from "../../src/components/test"
+import SimpleBlog from "./test"
 
 afterEach(cleanup)
 
