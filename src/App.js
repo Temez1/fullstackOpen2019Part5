@@ -9,13 +9,15 @@ import LoginForm from "./components/LoginForm"
 import BlogForm from "./components/BlogForm"
 import Togglable from "./components/Togglable"
 
+import useField from "./hooks/index"
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState("")
+  const blogTitle = useField("text")
+  const username = useField("text")
+  const password = useField("password")
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationStyle, setNotificationStyle] = useState("default")
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -49,16 +51,14 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
-        username, password
-      })
+      const user = await loginService.login({ username:username.value, password:password.value })
 
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user))
 
       blogService.setToken(user.token)
       setUser(user)
-      setUsername("")
-      setPassword("")
+      username.reset()
+      password.reset()
       newNotification("Logged in !", "success")
     } catch (exception) {
       newNotification("wrong credentials", "fail")
@@ -73,7 +73,7 @@ const App = () => {
   const addBlog = (event) => {
     event.preventDefault()
     const noteObject = {
-      title: newBlog,
+      title: blogTitle.value,
       author: "test",
       url: "test.fi",
     }
@@ -82,7 +82,7 @@ const App = () => {
       .create(noteObject)
       .then(data => {
         setBlogs(blogs.concat(data))
-        setNewBlog("")
+        blogTitle.reset()
       })
     newNotification("Added new blog!", "success")
   }
@@ -99,10 +99,8 @@ const App = () => {
         ? <Togglable buttonLabel="login">
           <LoginForm
             loginHandler={handleLogin}
-            usernameState={username}
-            usernameSetter={setUsername}
-            passwordState={password}
-            passwordSetter={setPassword}
+            usernameField={username}
+            passwordField={password}
           />
         </Togglable>
         : <div>
@@ -110,8 +108,7 @@ const App = () => {
           <Togglable buttonLabel="New blog">
             <BlogForm
               blogFormHandler={addBlog}
-              blogState={newBlog}
-              blogSetter={setNewBlog}
+              blogTitleField={blogTitle}
             />
           </Togglable>
           <button onClick={handleLogout}>logout</button>

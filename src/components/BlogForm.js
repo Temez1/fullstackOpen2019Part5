@@ -1,16 +1,18 @@
 import React from "react"
 
-const BlogForm = ({ blogFormHandler, blogState, blogSetter }) => (
-  <form onSubmit={blogFormHandler}>
-    <div>
-        title
-      <input
-        value={blogState}
-        onChange={({ target }) => blogSetter(target.value)}
-      />
-    </div>
-    <button type="submit">create</button>
-  </form>
-)
+const BlogForm = ({ blogFormHandler, blogTitleField }) => {
+  // eslint-disable-next-line no-unused-vars
+  const { reset, ...rest } = blogTitleField
+  return(
+    <form onSubmit={blogFormHandler}>
+      <div>
+          title
+        <input {...rest} />
+      </div>
+      <button type="submit">create</button>
+    </form>
+  )
+}
+
 
 export default BlogForm
